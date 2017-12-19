@@ -36,7 +36,7 @@ if __name__ == '__main__':
       with open(filename, 'w') as data_file:
         data_file.write('Block mined by node on port %s' % args.port)
     else:
-      print "Chaindata directory already has files. If you want to generate a first block, delete files and rerun"
+      print("Chaindata directory already has files. If you want to generate a first block, delete files and rerun")
   else:
     #this is the normal part, syncing from peers
     sync.sync(save=True)

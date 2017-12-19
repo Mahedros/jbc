@@ -39,9 +39,9 @@ def blockchain():
 @node.route('/mined', methods=['POST'])
 def mined():
   possible_block_dict = request.get_json()
-  print possible_block_dict
-  print sched.get_jobs()
-  print sched
+  print(possible_block_dict)
+  print(sched.get_jobs())
+  print(sched)
 
   sched.add_job(mine.validate_possible_block, args=[possible_block_dict], id='validate_possible_block') #add the block again
 

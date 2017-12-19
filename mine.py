@@ -36,7 +36,7 @@ def mine_from_prev_block(prev_block, rounds=STANDARD_ROUNDS, start_nonce=0, time
   return mine_block(new_block, rounds=rounds, start_nonce=start_nonce)
 
 def mine_block(new_block, rounds=STANDARD_ROUNDS, start_nonce=0):
-  print "Mining for block %s. start_nonce: %s, rounds: %s" % (new_block.index, start_nonce, rounds)
+  print("Mining for block %s. start_nonce: %s, rounds: %s" % (new_block.index, start_nonce, rounds))
   #Attempting to find a valid nonce to match the required difficulty
   #of leading zeros. We're only going to try 1000
   nonce_range = [i+start_nonce for i in range(rounds)]
@@ -44,7 +44,7 @@ def mine_block(new_block, rounds=STANDARD_ROUNDS, start_nonce=0):
     new_block.nonce = nonce
     new_block.update_self_hash()
     if str(new_block.hash[0:NUM_ZEROS]) == '0' * NUM_ZEROS:
-      print "block %s mined. Nonce: %s" % (new_block.index, new_block.nonce)
+      print("block %s mined. Nonce: %s" % (new_block.index, new_block.nonce))
       assert new_block.is_valid()
       return new_block, rounds, start_nonce, new_block.timestamp
 
@@ -60,12 +60,12 @@ def mine_for_block_listener(event):
     #we'd use rounds and start_nonce to know what the next
     #mining task should use
     if new_block:
-      print "Mined a new block"
+      print("Mined a new block")
       new_block.self_save()
       broadcast_mined_block(new_block)
       sched.add_job(mine_from_prev_block, args=[new_block], kwargs={'rounds':STANDARD_ROUNDS, 'start_nonce':0}, id='mining') #add the block again
     else:
-      print event.retval
+      print(event.retval)
       sched.add_job(mine_for_block, kwargs={'rounds':rounds, 'start_nonce':start_nonce+rounds, 'timestamp': timestamp}, id='mining') #add the block again
       sched.print_jobs()
 
@@ -78,7 +78,7 @@ def broadcast_mined_block(new_block):
     try:
       r = requests.post(peer+'mined', json=block_info_dict)
     except requests.exceptions.ConnectionError:
-      print "Peer %s not connected" % peer
+      print("Peer %s not connected" % peer)
       continue
   return True
 
@@ -92,15 +92,15 @@ def validate_possible_block(possible_block_dict):
     sched.print_jobs()
     try:
       sched.remove_job('mining')
-      print "removed running mine job in validating possible block"
+      print("removed running mine job in validating possible block")
     except apscheduler.jobstores.base.JobLookupError:
-      print "mining job didn't exist when validating possible block"
+      print("mining job didn't exist when validating possible block")
 
-    print "readding mine for block validating_possible_block"
-    print sched
-    print sched.get_jobs()
+    print("readding mine for block validating_possible_block")
+    print(sched)
+    print(sched.get_jobs())
     sched.add_job(mine_for_block, kwargs={'rounds':STANDARD_ROUNDS, 'start_nonce':0}, id='mining') #add the block again
-    print sched.get_jobs()
+    print(sched.get_jobs())
 
     return True
   return False

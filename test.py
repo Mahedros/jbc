@@ -118,7 +118,7 @@ with freeze_time(tt):
   poss_block_three = utils.create_new_block_from_prev(prev_block=mine_test_block_two, data='Mine test block three.')
   mine_test_block_three = utils.find_valid_nonce(poss_block_three)
 
-print mine_test_block_three.__dict__
+print(mine_test_block_three.__dict__)
 
 #times for mining zero, first, second, and third blocks
 #freezegun generation

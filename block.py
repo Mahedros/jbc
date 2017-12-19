@@ -32,7 +32,7 @@ class Block(object):
 
   def update_self_hash(self):
     sha = hashlib.sha256()
-    sha.update(self.header_string())
+    sha.update(self.header_string().encode('utf8'))
     new_hash = sha.hexdigest()
     self.hash = new_hash
     return new_hash

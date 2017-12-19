@@ -16,7 +16,7 @@ def sync_local():
         try:
           block_info = json.load(block_file)
         except:
-          print filepath
+          print(filepath)
         local_block = Block(block_info)
         blocks.append(local_block)
   blocks.sort(key=lambda block: block.index)
@@ -34,15 +34,15 @@ def sync_overall(save=False):
       peer_blocks = [Block(bdict) for bdict in peer_blockchain_dict]
       peer_chain = Chain(peer_blocks)
 
-      print peer_chain.is_valid()
+      print(peer_chain.is_valid())
       if peer_chain.is_valid() and len(peer_chain) > len(best_chain):
         best_chain = peer_chain
 
     except requests.exceptions.ConnectionError:
-      print "Peer at %s not running. Continuing to next peer." % peer
+      print("Peer at %s not running. Continuing to next peer." % peer)
     else:
-      print "Peer at %s is running. Gathered their blochchain for analysis." % peer
-  print "Longest blockchain is %s blocks" % len(best_chain)
+      print("Peer at %s is running. Gathered their blochchain for analysis." % peer)
+  print("Longest blockchain is %s blocks" % len(best_chain))
   #for now, save the new blockchain over whatever was there
   if save:
     best_chain.self_save()

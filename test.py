@@ -127,16 +127,16 @@ ft = "2012-11-02 12:00:01"
 st = "2012-11-03 12:00:01"
 tt = "2012-11-04 12:00:01"
 
-mine_test_block_zero_dict = {'nonce': 1185358, 'index': 0, 'hash': '00000ff000e7c05047d0acdc8652f096db4115ed8882949a0dc0dbf21666fbec', 'timestamp': 20121101120001000000L, 'prev_hash': '', 'data': 'Mine test block zero.'}
+mine_test_block_zero_dict = {'nonce': 1185358, 'index': 0, 'hash': '00000ff000e7c05047d0acdc8652f096db4115ed8882949a0dc0dbf21666fbec', 'timestamp': 20121101120001000000, 'prev_hash': '', 'data': 'Mine test block zero.'}
 mine_test_block_zero = Block(mine_test_block_zero_dict)
 
-mine_test_block_one_dict = {'nonce': 1685195, 'index': 1, 'hash': '00000ff7cfc90b72c371afb451a4203ee194fed64574f4b99db9faf1722831ca', 'timestamp': 20121102120001000000L, 'prev_hash': '00000ff000e7c05047d0acdc8652f096db4115ed8882949a0dc0dbf21666fbec', 'data': 'Mine test block one.'}
+mine_test_block_one_dict = {'nonce': 1685195, 'index': 1, 'hash': '00000ff7cfc90b72c371afb451a4203ee194fed64574f4b99db9faf1722831ca', 'timestamp': 20121102120001000000, 'prev_hash': '00000ff000e7c05047d0acdc8652f096db4115ed8882949a0dc0dbf21666fbec', 'data': 'Mine test block one.'}
 mine_test_block_one = Block(mine_test_block_one_dict)
 
-mine_test_block_two_dict = {'nonce': 366523, 'index': 2, 'hash': '000004f2294896ed248d112922e5a2b98596ddcaba5923d2917cb79650ffbc24', 'timestamp': 20121103120001000000L, 'prev_hash': '00000ff7cfc90b72c371afb451a4203ee194fed64574f4b99db9faf1722831ca', 'data': 'Mine test block two.'}
+mine_test_block_two_dict = {'nonce': 366523, 'index': 2, 'hash': '000004f2294896ed248d112922e5a2b98596ddcaba5923d2917cb79650ffbc24', 'timestamp': 20121103120001000000, 'prev_hash': '00000ff7cfc90b72c371afb451a4203ee194fed64574f4b99db9faf1722831ca', 'data': 'Mine test block two.'}
 mine_test_block_two = Block(mine_test_block_two_dict)
 
-mine_test_block_three_dict = {'nonce': 590929, 'index': 3, 'hash': '0000038edddd9610a4d5f11036dfa153ff678eba9b122e3e41dcc80eb247bfb4', 'timestamp': 20121104120001000000L, 'prev_hash': '000004f2294896ed248d112922e5a2b98596ddcaba5923d2917cb79650ffbc24', 'data': 'Mine test block three.'}
+mine_test_block_three_dict = {'nonce': 590929, 'index': 3, 'hash': '0000038edddd9610a4d5f11036dfa153ff678eba9b122e3e41dcc80eb247bfb4', 'timestamp': 20121104120001000000, 'prev_hash': '000004f2294896ed248d112922e5a2b98596ddcaba5923d2917cb79650ffbc24', 'data': 'Mine test block three.'}
 mine_test_block_three = Block(mine_test_block_three_dict)
 
 mine_test_chain = Chain([mine_test_block_zero, mine_test_block_one, mine_test_block_two, mine_test_block_three])

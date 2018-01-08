@@ -1,6 +1,13 @@
 from config import *
 import datetime
 import block
+from copy import deepcopy
+from threading import Lock
+
+
+node_states = {}
+states_lock = Lock()
+
 
 def is_valid_chain():
   '''
@@ -32,10 +39,14 @@ def create_new_block_from_prev(prev_block=None, data=None, timestamp=None):
     index = int(prev_block.index) + 1
     prev_hash = prev_block.hash
 
-  if not data:
+  states_lock.acquire()
+  data = deepcopy(node_states)
+  states_lock.release()
+
+  """if not data:
     filename = '%sdata.txt' % (CHAINDATA_DIR)
     with open(filename, 'r') as data_file:
-      data = data_file.read()
+      data = data_file.read()"""
 
   if not timestamp:
     timestamp = datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')

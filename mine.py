@@ -9,6 +9,7 @@ import glob
 
 from block import Block
 from config import *
+from utils import states_lock, node_states
 import utils
 
 import apscheduler
@@ -99,6 +100,10 @@ def validate_possible_block(possible_block_dict):
     print("readding mine for block validating_possible_block")
     print(sched)
     print(sched.get_jobs())
+    states_lock.acquire()
+    for key in node_states:
+        node_states[key] = node_states[key][len(possible_block_dict['data'][key]):]
+    states_lock.release()
     sched.add_job(mine_for_block, kwargs={'rounds':STANDARD_ROUNDS, 'start_nonce':0}, id='mining') #add the block again
     print(sched.get_jobs())
 

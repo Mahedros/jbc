@@ -25,7 +25,7 @@ class Block(object):
       self.hash = self.update_self_hash()
 
   def header_string(self):
-    return str(self.index) + self.prev_hash + self.data + str(self.timestamp) + str(self.nonce)
+    return str(self.index) + self.prev_hash + str(self.data) + str(self.timestamp) + str(self.nonce)
 
   def generate_header(index, prev_hash, data, timestamp, nonce):
     return str(index) + prev_hash + data + str(timestamp) + str(nonce)

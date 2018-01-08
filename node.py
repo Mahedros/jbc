@@ -8,16 +8,50 @@ import json
 import sys
 import apscheduler
 import argparse
+from threading import Thread
+from random import random
+from datetime import datetime
+import time
+from utils import node_states, states_lock
 
 import utils
 from config import *
 
 node = Flask(__name__)
-
+node_address = 'http://%s:%s/'
 sync.sync(save=True) #want to sync and save the overall "best" blockchain from peers
 
 from apscheduler.schedulers.background import BackgroundScheduler
 sched = BackgroundScheduler(standalone=True)
+
+def generate_status():
+    time.sleep(10)
+    filename = '%sdata.txt' % (CHAINDATA_DIR)
+    with open(filename) as data_file:
+        port = data_file.read().split(' ')[-1]
+    while True:
+        try:
+            r = requests.get(node_address + 'blockchain.json')
+        except requests.exceptions.ConnectionError:
+            continue
+        break
+    while True:
+        state = {}
+        if random() > .9:
+            state['status'] = 'Broken'
+        else:
+            state['status'] = 'Running'
+        state['timestamp'] = datetime.now().timestamp()
+        state['node'] = port
+        broadcast_node_state(state)
+        time.sleep(30)
+
+def broadcast_node_state(state):
+    for peer in PEERS:
+        try:
+            r = requests.post(peer + 'status', json=state)
+        except requests.exceptions.ConnectionError:
+            print('-----COULD NOT CONNECT TO %s-----' % peer)
 
 @node.route('/blockchain.json', methods=['GET'])
 def blockchain():
@@ -35,6 +69,17 @@ def blockchain():
   # so we can send them as json objects later
   json_blocks = json.dumps(local_chain.block_list_dict())
   return json_blocks
+
+@node.route('/status', methods=['POST'])
+def status():
+    state = request.get_json()
+    peer = state['node']
+    print('-----STATE: %s-----' % state)
+    states_lock.acquire()
+    node_states.setdefault(peer, []).append(state)
+    states_lock.release()
+    return jsonify(received=True)
+
 
 @node.route('/mined', methods=['POST'])
 def mined():
@@ -56,6 +101,8 @@ if __name__ == '__main__':
   parser.add_argument('--mine', '-m', dest='mine', action='store_true')
   args = parser.parse_args()
 
+  status_thread = Thread(target=generate_status, daemon=True)
+
   filename = '%sdata.txt' % (CHAINDATA_DIR)
   with open(filename, 'w') as data_file:
     data_file.write("Mined by node on port %s" % args.port)
@@ -70,5 +117,6 @@ if __name__ == '__main__':
   sched.start() #want this to start so we can validate on the schedule and not rely on Flask
 
   #now we know what port to use
+  node_address = node_address % ('127.0.0.1', args.port)
+  status_thread.start()
   node.run(host='127.0.0.1', port=args.port)
-

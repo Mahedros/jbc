@@ -1,5 +1,5 @@
 CHAINDATA_DIR = 'chaindata/'
-NUM_ZEROS = 6
+NUM_ZEROS = 5
 
 PEERS = [
     'http://localhost:5000/',

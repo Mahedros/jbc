@@ -12,7 +12,10 @@ class Block(object):
     '''
     for key, value in dictionary.items():
       if key in BLOCK_VAR_CONVERSIONS:
-        setattr(self, key, BLOCK_VAR_CONVERSIONS[key](value))
+        if key == 'data' and isinstance(value, dict):
+          setattr(self, key, value)
+        else:
+          setattr(self, key, BLOCK_VAR_CONVERSIONS[key](value))
       else:
         setattr(self, key, value)
     if not hasattr(self, 'hash'): #in creating the first block, needs to be removed in future

@@ -25,7 +25,10 @@ def dict_from_block_attributes(**kwargs):
   info = {}
   for key in kwargs:
     if key in BLOCK_VAR_CONVERSIONS:
-      info[key] = BLOCK_VAR_CONVERSIONS[key](kwargs[key])
+      if key == 'data' and isinstance(kwargs[key], dict):
+        info[key] = kwargs[key]
+      else:
+        info[key] = BLOCK_VAR_CONVERSIONS[key](kwargs[key])
     else:
       info[key] = kwargs[key]
   return info

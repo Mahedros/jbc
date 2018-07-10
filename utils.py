@@ -52,7 +52,11 @@ def create_new_block_from_prev(prev_block=None, data=None, timestamp=None):
     timestamp = datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
 
   nonce = 0
-  block_info_dict = dict_from_block_attributes(index=index, timestamp=timestamp, data=data, prev_hash=prev_hash, nonce=nonce)
+  block_info_dict = dict_from_block_attributes(index=index,
+                                               timestamp=timestamp,
+                                               data=data,
+                                               prev_hash=prev_hash,
+                                               nonce=nonce)
   new_block = block.Block(block_info_dict)
   return new_block
 

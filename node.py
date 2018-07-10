@@ -1,6 +1,7 @@
 from block import Block
 import mine
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import sync
 import requests
 import os
@@ -18,6 +19,7 @@ import utils
 from config import *
 
 node = Flask(__name__)
+CORS(node)
 node_address = 'http://%s:%s/'
 sync.sync(save=True) #want to sync and save the overall "best" blockchain from peers
 
@@ -29,12 +31,6 @@ def generate_status():
     filename = '%sdata.txt' % (CHAINDATA_DIR)
     with open(filename) as data_file:
         port = data_file.read().split(' ')[-1]
-    while True:
-        try:
-            r = requests.get(node_address + 'blockchain.json')
-        except requests.exceptions.ConnectionError:
-            continue
-        break
     while True:
         state = {}
         if random() > .9:
@@ -73,7 +69,7 @@ def blockchain():
 @node.route('/status', methods=['POST'])
 def status():
     state = request.get_json()
-    peer = state['node']
+    peer = str(state['node'])
     print('-----STATE: %s-----' % state)
     states_lock.acquire()
     node_states.setdefault(peer, []).append(state)
@@ -85,10 +81,10 @@ def status():
 def mined():
   possible_block_dict = request.get_json()
   print(possible_block_dict)
-  print(sched.get_jobs())
-  print(sched)
 
-  sched.add_job(mine.validate_possible_block, args=[possible_block_dict], id='validate_possible_block') #add the block again
+  sched.add_job(mine.validate_possible_block,
+                args=[possible_block_dict],
+                id='validate_possible_block') #add the block again
 
   return jsonify(received=True)
 
@@ -101,8 +97,6 @@ if __name__ == '__main__':
   parser.add_argument('--mine', '-m', dest='mine', action='store_true')
   args = parser.parse_args()
 
-  status_thread = Thread(target=generate_status, daemon=True)
-
   filename = '%sdata.txt' % (CHAINDATA_DIR)
   with open(filename, 'w') as data_file:
     data_file.write("Mined by node on port %s" % args.port)
@@ -111,12 +105,17 @@ if __name__ == '__main__':
   #only mine if we want to
   if args.mine:
     #in this case, sched is the background sched
-    sched.add_job(mine.mine_for_block, kwargs={'rounds':STANDARD_ROUNDS, 'start_nonce':0}, id='mining') #add the block again
-    sched.add_listener(mine.mine_for_block_listener, apscheduler.events.EVENT_JOB_EXECUTED)#, args=sched)
+    sched.add_job(mine.mine_for_block,
+                  kwargs={
+                           'rounds':STANDARD_ROUNDS,
+                           'start_nonce':0
+                         },
+                  id='mining') #add the block again
+    sched.add_listener(mine.mine_for_block_listener,
+                       apscheduler.events.EVENT_JOB_EXECUTED)#, args=sched)
 
   sched.start() #want this to start so we can validate on the schedule and not rely on Flask
 
   #now we know what port to use
   node_address = node_address % ('127.0.0.1', args.port)
-  status_thread.start()
-  node.run(host='127.0.0.1', port=args.port)
+  node.run(host='127.0.0.1', threaded=True, port=args.port)

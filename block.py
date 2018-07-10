@@ -25,7 +25,11 @@ class Block(object):
       self.hash = self.update_self_hash()
 
   def header_string(self):
-    return str(self.index) + self.prev_hash + str(self.data) + str(self.timestamp) + str(self.nonce)
+    return ''.join([str(self.index),
+                    self.prev_hash,
+                    str(self.data),
+                    str(self.timestamp),
+                    str(self.nonce)])
 
   def generate_header(index, prev_hash, data, timestamp, nonce):
     return str(index) + prev_hash + data + str(timestamp) + str(nonce)
@@ -49,11 +53,13 @@ class Block(object):
     info['timestamp'] = str(self.timestamp)
     info['prev_hash'] = str(self.prev_hash)
     info['hash'] = str(self.hash)
-    info['data'] = str(self.data)
+    info['data'] = str(self.data).replace("'", '"')
     info['nonce'] = str(self.nonce)
     return info
 
   def is_valid(self):
+    if self.data == {}:
+      return False
     self.update_self_hash()
     if str(self.hash[0:NUM_ZEROS]) == '0' * NUM_ZEROS:
       return True

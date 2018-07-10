@@ -58,7 +58,7 @@ class Block(object):
     return info
 
   def is_valid(self):
-    if self.data == {}:
+    if self.data == {} and self.prev_hash != '':
       return False
     self.update_self_hash()
     if str(self.hash[0:NUM_ZEROS]) == '0' * NUM_ZEROS:

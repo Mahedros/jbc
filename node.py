@@ -64,7 +64,7 @@ def blockchain():
     local_chain = sync.sync_local()  # update if they've changed
     # Convert our blocks into dictionaries
     # so we can send them as json objects later
-    index = json.loads(request.args.get('i', 0))
+    index = json.loads(request.args.get('i', '0'))
     json_blocks = json.dumps(local_chain.block_list_dict()[index:])
     return json_blocks
 

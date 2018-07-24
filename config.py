@@ -11,13 +11,12 @@ PEERS = [
     ]
 
 BLOCK_VAR_CONVERSIONS = {
-                          'index': int,
-                          'nonce': int,
-                          'hash': str,
-                          'prev_hash': str,
-                          'timestamp': int,
-                          'data': json.loads
+                            'index': int,
+                            'nonce': int,
+                            'hash': str,
+                            'prev_hash': str,
+                            'timestamp': int,
+                            'data': json.loads
                         }
 
 STANDARD_ROUNDS = 100000
-

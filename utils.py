@@ -1,5 +1,5 @@
 from config import *
-import datetime
+import time
 import block
 from copy import deepcopy
 from threading import Lock
@@ -54,7 +54,7 @@ def create_new_block_from_prev(prev_block=None, data=None, timestamp=None):
             data = data_file.read()"""
 
     if not timestamp:
-        timestamp = datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+        timestamp = int(time.time())
 
     nonce = 0
     block_info_dict = dict_from_block_attributes(index=index,

@@ -54,7 +54,7 @@ def create_new_block_from_prev(prev_block=None, data=None, timestamp=None):
             data = data_file.read()"""
 
     if not timestamp:
-        timestamp = int(time.time())
+        timestamp = int(time.time() * 1000) # JS works in milliseconds, but python uses seconds
 
     nonce = 0
     block_info_dict = dict_from_block_attributes(index=index,

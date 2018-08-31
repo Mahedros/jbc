@@ -8,6 +8,13 @@ class Chain(object):
     '''
     def __init__(self, blocks):
         self.blocks = blocks
+        self.links = {}
+        for block in blocks:
+            for node in block.data:
+                if isinstance(block.data[node][-1]['status'], dict):
+                    self.links[node] = block.data[node][-1]['status']['target']
+                else:
+                    self.links[node] = None
 
     def is_valid(self):
         '''
@@ -99,6 +106,11 @@ class Chain(object):
         if new_block.index > len(self):
             pass
         self.blocks.append(new_block)
+        for node in new_block.data:
+            if isinstance(new_block.data[node][-1]['status'], dict):
+                self.links[node] = new_block.data[node][-1]['status']['target']
+            else:
+                self.links[node] = None
 
         return True
 

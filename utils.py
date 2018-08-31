@@ -5,6 +5,7 @@ from copy import deepcopy
 from threading import Lock
 
 
+chain = None
 node_states = {}
 states_lock = Lock()
 

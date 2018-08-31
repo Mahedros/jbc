@@ -12,7 +12,7 @@ from threading import Thread
 from random import random
 from datetime import datetime
 import time
-from utils import node_states, states_lock
+from utils import node_states, states_lock, chain
 from apscheduler.schedulers.background import BackgroundScheduler
 import utils
 from config import *
@@ -20,7 +20,7 @@ from config import *
 node = Flask(__name__)
 CORS(node)
 node_address = 'http://%s:%s/'
-sync.sync(save=True)  # want to sync and save the overall "best" blockchain from peers
+chain = sync.sync(save=True)  # want to sync and save the overall "best" blockchain from peers
 
 sched = BackgroundScheduler(standalone=True)
 
@@ -62,6 +62,7 @@ def blockchain():
         prev_hash
     '''
     local_chain = sync.sync_local()  # update if they've changed
+    print(local_chain.links)
     # Convert our blocks into dictionaries
     # so we can send them as json objects later
     index = json.loads(request.args.get('i', '0'))
@@ -75,9 +76,31 @@ def status():
     peer = str(state['node'])
     print('-----STATE: %s-----' % state)
     states_lock.acquire()
+    if isinstance(state['status'], dict):
+        for blk in reversed(chain.blocks):
+            for node in blk.data:
+                node_data = blk.data[node]
+                print(node_data)
+                if (isinstance(node_data[-1]['status'], dict)
+                        and state['status']['target'] == node_data[-1]['status']['target']):
+                        states_lock.release()
+                        return state_conflict('Ground Station is busy')
+        for node in node_states:
+            if (node_states[node]
+                    and isinstance(node_states[node][-1]['status'], dict)
+                    and state['status']['target'] == node_states[node][-1]['status']['target']):
+                states_lock.release()
+                return state_conflict('Ground Station is busy')
     node_states.setdefault(peer, []).append(state)
     states_lock.release()
     return jsonify(received=True)
+
+
+def state_conflict(msg):
+    response = jsonify(failure_reason='Ground Station is busy')
+    response.status = '409 CONFLICT'
+    response.status_code = 409
+    return response
 
 
 @node.route('/mined', methods=['POST'])

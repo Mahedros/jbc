@@ -10,7 +10,7 @@ import logging
 import sys
 from block import Block
 from config import *
-from utils import states_lock, node_states
+from utils import states_lock, node_states, chain
 import utils
 
 import apscheduler
@@ -138,7 +138,7 @@ def validate_possible_block(possible_block_dict):
                                  'start_nonce': 0
                              },
                       id='mining')  # add the block again
-
+        chain.add_block(possible_block)
         return True
     return False
 

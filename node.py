@@ -11,6 +11,7 @@ import argparse
 from threading import Thread
 from random import random
 from datetime import datetime
+import os
 import time
 from utils import node_states, states_lock, chain
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -20,34 +21,11 @@ from config import *
 node = Flask(__name__)
 CORS(node)
 node_address = 'http://%s:%s/'
+if not os.path.exists('chaindata'):
+    os.mkdir('chaindata')
 chain = sync.sync(save=True)  # want to sync and save the overall "best" blockchain from peers
 
 sched = BackgroundScheduler(standalone=True)
-
-
-def generate_status():
-    time.sleep(10)
-    filename = '%sdata.txt' % (CHAINDATA_DIR)
-    with open(filename) as data_file:
-        port = data_file.read().split(' ')[-1]
-    while True:
-        state = {}
-        if random() > .9:
-            state['status'] = 'Broken'
-        else:
-            state['status'] = 'Running'
-        state['timestamp'] = datetime.now().timestamp()
-        state['node'] = port
-        broadcast_node_state(state)
-        time.sleep(30)
-
-
-def broadcast_node_state(state):
-    for peer in PEERS:
-        try:
-            r = requests.post(peer + 'status', json=state)
-        except requests.exceptions.ConnectionError:
-            print('-----COULD NOT CONNECT TO %s-----' % peer)
 
 
 @node.route('/blockchain.json', methods=['GET'])
@@ -122,10 +100,6 @@ if __name__ == '__main__':
                         help='what port we will run the node on')
     parser.add_argument('--mine', '-m', dest='mine', action='store_true')
     args = parser.parse_args()
-
-    filename = '%sdata.txt' % (CHAINDATA_DIR)
-    with open(filename, 'w') as data_file:
-        data_file.write("Mined by node on port %s" % args.port)
 
     mine.sched = sched  # to override the BlockingScheduler in the
     # only mine if we want to

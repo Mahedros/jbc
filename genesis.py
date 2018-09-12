@@ -37,10 +37,6 @@ if __name__ == '__main__':
             # create the first block
             first_block = mine_first_block()
             first_block.self_save()
-            # need a data.txt to tell which port we're running on
-            filename = "%s/data.txt" % CHAINDATA_DIR
-            with open(filename, 'w') as data_file:
-                data_file.write('Block mined by node on port %s' % args.port)
         else:
             print("Chaindata directory already has files. "
                   "If you want to generate a first block, delete files and rerun")

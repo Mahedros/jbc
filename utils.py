@@ -49,11 +49,6 @@ def create_new_block_from_prev(prev_block=None, data=None, timestamp=None):
     data = deepcopy(node_states)
     states_lock.release()
 
-    """if not data:
-        filename = '%sdata.txt' % (CHAINDATA_DIR)
-        with open(filename, 'r') as data_file:
-            data = data_file.read()"""
-
     #if not timestamp:
     timestamp = int(time.time() * 1000) # JS works in milliseconds, but python uses seconds
 
